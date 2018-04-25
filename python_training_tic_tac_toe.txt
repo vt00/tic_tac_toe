@@ -1,0 +1,299 @@
+Jupyter NotebookLogout python training wk9 - milestone project Last Checkpoint: Last Thursday at 4:48 PM (autosaved) 
+Python [conda env:py36] 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+CellToolbar
+In [ ]:
+
+from IPython.display import clear_output, Markdown, display
+
+clear_output(wait=False)
+score1=0
+score2=0
+from IPython.display import clear_output, Markdown, display
+​
+clear_output(wait=False)
+score1=0
+score2=0
+In [2]:
+
+def display_board(board):
+    print('Game Board:\n', board[1],' | ', \
+          board[2],' | ', board[3],'\n---------------', \
+          '\n',board[4],' | ', board[5],' | ', board[6], \
+          '\n---------------', '\n',board[7],' | ', \
+          board[8],' | ', board[9],'\n')
+    
+In [3]:
+
+test_board = ['#','X','O','X','X','X','O','X','O','O']
+In [4]:
+
+display_board(test_board)
+Game Board:
+ X  |  O  |  X 
+--------------- 
+ X  |  X  |  O 
+--------------- 
+ X  |  O  |  O 
+
+In [5]:
+
+def new_game():
+    global p1, p2, board, spot, spots, score1, score2 
+    
+    # initialization    
+    
+    #list all spots with an extra spot of 0 to offset positioning
+    board=[spt for spt in {i for i in range(0,10)}]
+    #OR use an empty board 
+    #board=[' ',' ',' ',' ',' ',' ',' ',' ',' ']
+    
+    #display the board
+    display_board(board)
+    
+    
+    #restore spots available
+    spots=[spt for spt in {i for i in range(1,10)}]
+    
+    #clear go_order
+    go_order=1
+    
+    #player symbals
+    p1=''
+    p2=''
+    
+     
+    
+    # check player pref on symbal
+    if score1>0 or score2>0:
+        print('**Clear the score? y/n**')
+        cc = input().lower()
+        while cc.lower() not in ('y','n'):
+            print('**Clear the score? y/n**')
+            cc = input().lower()
+            continue
+        
+        if cc == 'y':
+            score1=0
+            score2=0
+    
+    clear_output(wait=False)
+    print('Tic, Tac, Toe!\n\nNew Game:\nPlayer1, do you want to be X or O?')
+    p1 = input().upper()    
+    while p1 not in ('X','O'):
+        print('Try again! <insert insulting name here>\n')
+        p1 = input().upper()
+        continue
+    
+              
+    if p1=='X':
+        p2='O'
+    else:            
+        p2='X'
+        
+    clear_output(wait=False)
+    print('P1 is',p1)
+    print('P2 is',p2)
+    print('spots available now:',spots)
+    play_game()
+    
+In [6]:
+
+def game_step(player):
+    global p1, p2, board, spot, spots, score1, score2  
+    
+    #clear spot
+    spot=0
+    
+    if player == 1:
+        print('Player1, choose your spot ...')
+        display_board(board)
+        print('spot is',spot)
+        print('spots available now:',spots)
+        
+        spot=int(input())
+        
+        while spot not in spots:
+            print('Pick a number 1-9 and not already filled, try again')
+            spot=int(input())
+            continue
+                        
+        if spot in spots:        
+            print('spot is',spot)
+            #update spots available
+            spots.remove(spot)
+            print('spots available now:',spots)
+            #update board
+            board[spot]=p1
+            display_board(board)                
+                   
+    if player == 2:
+        print('Player2, choose your spot ...')
+        display_board(board)
+        print('spot is',spot)
+        print('spots available now:',spots)
+        
+        spot=int(input())
+        
+        while spot not in spots:
+            print('Pick a number 1-9 and not already filled, try again')
+            spot=int(input())
+            continue
+                        
+        if spot in spots:        
+            print('spot is',spot)
+            #update spots available
+            spots.remove(spot)
+            print('spots available now:',spots)
+            #update board
+            board[spot]=p2
+            display_board(board)                
+        
+In [7]:
+
+def check_win(brd):
+    global p1, p2, board, spot, spots, score1, score2
+    
+    #check for winner
+    if ((brd[1] == brd[2] == brd[3]) or \
+        (brd[4] == brd[5] == brd[6]) or \
+        (brd[7] == brd[8] == brd[9]) or \
+        (brd[1] == brd[4] == brd[7]) or \
+        (brd[2] == brd[5] == brd[8]) or \
+        (brd[3] == brd[6] == brd[9]) or \
+        (brd[1] == brd[5] == brd[9]) or \
+        (brd[3] == brd[5] == brd[7])):
+        #print('True')
+        return True
+        #win_fl = 1
+    else:
+        #print('False')
+        return False
+        #win_fl = 0
+​
+#print(test_board[1],test_board[4],test_board[7] )
+#print(check_win(test_board))
+#test_board[1] == test_board[2] == test_board[3] or test_board[1]==test_board[4]==test_board[7]
+​
+In [8]:
+
+def play_game():
+    global p1, p2, board, spot, spots, score1, score2
+         
+    i=1
+        
+    #max 9 spots to fill
+    for i in range(1,10):
+​
+        #play game: odd turns for player1
+        if i%2!=0:
+            clear_output(wait=False)
+            game_step(1) 
+            #check win
+            if check_win(board)==True:
+                score1+=1
+                clear_output(wait=False)
+                print('\x1b[43m!Congratulations! player1 is the winner!\x1b[0m')
+                print('Player1 : Player2')
+                print('  ', score1, '   :   ', score2, '  ')
+                #display_board(board)
+​
+                print('Play again? y/n')
+                restart=input()
+                while restart.lower() not in ('y','n'):
+                    clear_output(wait=False)
+                    print('Play again? y/n')
+                    restart=input()
+                    continue
+​
+                if restart.lower()=='y':
+                    clear_output(wait=False)
+                    new_game()
+​
+​
+                else:
+                    clear_output(wait=False)
+                    print('\x1b[43m!Goodbye!\x1b[0m')
+                    print('Player1 : Player2')
+                    print('  ', score1, '   :   ', score2, '  ')
+                    break
+                    
+        #play game: even turns for player2    
+        else:
+            clear_output(wait=False)
+            game_step(2)
+            #check win
+            if check_win(board)==True:
+                score2+=1
+                clear_output(wait=False)
+                print('\x1b[43m!Congratulations! player2 is the winner!\x1b[0m')
+                print('Player1 : Player2')
+                print('  ', score1, '   :   ', score2, '  ')
+                #display_board(board)
+​
+                print('Play again? y/n')
+                restart=input()
+                while restart.lower() not in ('y','n'):
+                    clear_output(wait=False)
+                    print('Play again? y/n')
+                    restart=input()
+                    continue
+​
+                if restart.lower()=='y':
+                    clear_output(wait=False)
+                    new_game()
+​
+​
+                else:
+                    clear_output(wait=False)
+                    print('\x1b[43m!Goodbye!\x1b[0m')
+                    print('Player1 : Player2')
+                    print('  ', score1, '   :   ', score2, '  ')
+                    break
+​
+                                
+        #if reached the end and no winner
+        if spots==[]:
+            print('\x1b[43m!It is a tie! No winner!\x1b[0m')
+            print('Player1 : Player2')
+            print('  ', score1, '   :   ', score2, '  ')
+            #display_board(board)
+​
+            print('Play again? y/n')
+            restart=input()
+            while restart.lower() not in ('y','n'):
+                clear_output(wait=False)
+                print('Play again? y/n')
+                restart=input()
+                continue
+​
+            if restart.lower()=='y':
+                clear_output(wait=False)
+                new_game()
+​
+            else:
+                clear_output(wait=False)
+                print('\x1b[43m!Goodbye!\x1b[0m')
+                print('Player1 : Player2')
+                print('  ', score1, '   :   ', score2, '  ')
+                break
+        
+In [ ]:
+
+# Lets Play!
+new_game()
+# Lets Play!
+new_game()
+In [ ]:
+
+​
+In [ ]:
+
+​
